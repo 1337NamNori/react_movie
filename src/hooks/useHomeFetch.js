@@ -3,6 +3,9 @@ import {useEffect, useState} from "react";
 // API
 import API from "../API";
 
+// Helpers
+import {getHomeState, setHomeState} from "../helpers";
+
 const initialState = {
     page: 0,
     results: [],
@@ -37,16 +40,34 @@ export const useHomeFetch = () => {
 
     // Initial and search
     useEffect(() => {
+        if(!searchTerm) {
+            const sessionState = getHomeState();
+
+            if (sessionState) {
+                setState(sessionState);
+
+                return;
+            }
+        }
+
         setState(initialState);
         fetchMovies(1, searchTerm);
     }, [searchTerm]);
 
+    // Load more
     useEffect(() => {
         if (!isLoadingMore) return;
 
         fetchMovies(state.page + 1, searchTerm);
         setIsLoadingMore(false);
     }, [isLoadingMore, searchTerm, state.page]);
+
+    // Session Storage
+    useEffect(() => {
+        if (!searchTerm) {
+            setHomeState(state);
+        }
+    }, [searchTerm, state]);
 
     return {
         state,

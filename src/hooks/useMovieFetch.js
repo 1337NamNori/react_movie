@@ -3,6 +3,9 @@ import {useState, useEffect} from "react";
 // API
 import API from "../API";
 
+// Helpers
+import {getMovieState, setMovieState} from "../helpers";
+
 export const useMovieFetch = movieId => {
     const [state, setState] = useState({});
     const [loading, setLoading] = useState(true);
@@ -30,8 +33,22 @@ export const useMovieFetch = movieId => {
             }
         }
 
+        const sessionState = getMovieState(movieId);
+
+        if (sessionState) {
+            setState(sessionState);
+            setLoading(false);
+
+            return;
+        }
+
         fetchMovie();
     }, [movieId]);
+
+    // Session Storage
+    useEffect(() => {
+        setMovieState(movieId, state);
+    }, [state, movieId]);
 
     return {state, loading, error}
 }
