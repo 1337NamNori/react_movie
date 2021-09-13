@@ -12,7 +12,7 @@ export const useMovieFetch = movieId => {
         const fetchMovie = async () => {
             try {
                 setLoading(true);
-                setError(true);
+                setError(false);
 
                 const movie = await API.fetchMovie(movieId);
                 const credits = await API.fetchCredits(movieId);
@@ -30,7 +30,7 @@ export const useMovieFetch = movieId => {
             }
         }
 
-        fetchMovie()
+        fetchMovie();
     }, [movieId]);
 
     return {state, loading, error}
